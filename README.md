@@ -1,4 +1,4 @@
-# IoTHouse
+# iothouse
 
 Extension for Hiwonder IoTHouse
 
