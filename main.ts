@@ -1,8 +1,8 @@
 /*
- iothouse package
+ IoTHouse package
 */
 //% weight=10 icon="\uf013" color=#ff7f00
-namespace iothouse {
+namespace IoTHouse {
     export enum Lights {
         //% block="Light 1"
         Light1 = 0x01,
