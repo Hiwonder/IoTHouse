@@ -544,12 +544,13 @@ namespace IoTHouse {
     function initRGBLight() {
         if (!rgbLight) {
             if (rgbPort == ioPort.port1) {
-                rgbLight = RGBLight.create(DigitalPin.P1, 2, RGBPixelMode.RGB);
+                rgbLight = RGBLight.create(DigitalPin.P1, 3, RGBPixelMode.RGB);
             }
             else if (rgbPort == ioPort.port2) {
-                rgbLight = RGBLight.create(DigitalPin.P13, 2, RGBPixelMode.RGB);
+                rgbLight = RGBLight.create(DigitalPin.P13, 3, RGBPixelMode.RGB);
             }
         }
+        clearLight();
     }
 
     /**
