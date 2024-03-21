@@ -1,4 +1,4 @@
-# NexBit
+# IoTHouse
 
 Extension for Hiwonder IoTHouse
 
