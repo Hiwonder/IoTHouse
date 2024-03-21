@@ -1,13 +1,13 @@
 {
-	"iothouse.iothouseInit":"iothouse板初始化，请在开机时执行",
-	"iothouse.setServo":"设置1到2号舵机角度，角度范围0~180",
-	"iothouse.setBusServo":"设置1到2号总线舵机角度，角度范围0~240",
-	"iothouse.setMotorSpeed":"设置马达1和马达2的速度，速度范围-100到100，可控制坦克车行进和转弯",
-	"iothouse.Ultrasonic":"获取超声波检测到障碍物的距离",
-	"iothouse.getSoundVolume":"获取声音传感器检测到的音量等级，范围0到255",
-	"iothouse.readLineFollowerStatus":"获取巡线传感器的状态",
-	"iothouse.setPixelRGB":"设置彩灯颜色，设置完成后请执行显示彩灯操作",
-	"iothouse.setPixelRGBArgs":"设置彩灯颜色，填入编号即可设置，1.红色 2.橙色 3.黄色 4.绿色 5.蓝色 6.靛蓝 7.紫罗兰 8.紫色 9.白色,设置完成后请执行显示彩灯操作",
-	"iothouse.showLight":"显示彩灯，和设置彩灯颜色配合使用，设置完彩灯颜色后必须执行显示彩灯完成显示",
-	"iothouse.clearLight":"清除彩灯颜色，关闭彩灯"
+	"IoTHouse.iothouse_init":"IoTHouse板初始化，请在开机时执行",
+	"IoTHouse.setServo":"设置1到2号舵机角度，角度范围0~180",
+	"IoTHouse.setBusServo":"设置1到2号总线舵机角度，角度范围0~240",
+	"IoTHouse.setMotorSpeed":"设置马达1和马达2的速度，速度范围-100到100，可控制坦克车行进和转弯",
+	"IoTHouse.Ultrasonic":"获取超声波检测到障碍物的距离",
+	"IoTHouse.getSoundVolume":"获取声音传感器检测到的音量等级，范围0到255",
+	"IoTHouse.readLineFollowerStatus":"获取巡线传感器的状态",
+	"IoTHouse.setPixelRGB":"设置彩灯颜色，设置完成后请执行显示彩灯操作",
+	"IoTHouse.setPixelRGBArgs":"设置彩灯颜色，填入编号即可设置，1.红色 2.橙色 3.黄色 4.绿色 5.蓝色 6.靛蓝 7.紫罗兰 8.紫色 9.白色,设置完成后请执行显示彩灯操作",
+	"IoTHouse.showLight":"显示彩灯，和设置彩灯颜色配合使用，设置完彩灯颜色后必须执行显示彩灯完成显示",
+	"IoTHouse.clearLight":"清除彩灯颜色，关闭彩灯"
 }
