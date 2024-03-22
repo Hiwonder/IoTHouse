@@ -1,4 +1,4 @@
-# IoTHouse
+# iothouse
 
 Extension for Hiwonder IoTHouse
 
@@ -8,10 +8,10 @@ MIT
 
 ## Supported targets
 
-* for PXT/IoTHouse
+* for PXT/iothouse
 (The metadata above is needed for package search.)
 
 ```package
-IoTHouse=github:hiwonder/IoTHouse
+iothouse=github:hiwonder/IoTHouse
 ```
 

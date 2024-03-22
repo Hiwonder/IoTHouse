@@ -82,6 +82,9 @@ namespace IoTHouse {
     let brightnessPort = INVALID_PORT;
     let rainwaterPort = INVALID_PORT;
 
+    let temperature: number = 0;
+    let airhumidity: number = 0;
+
     function mapRGB(x: number, in_min: number, in_max: number, out_min: number, out_max: number): number {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
@@ -443,11 +446,11 @@ namespace IoTHouse {
 
     function getAc() {
         temp_i2cwrite(0xac33);
-        basic.pause(100)
+        basic.pause(10)
         let value = temp_i2cread(1);
         for (let i = 0; i < 100; i++) {
             if ((value[0] & 0x80) != 0x80) {
-                basic.pause(20)
+                basic.pause(5)
             }
             else
                 break;
@@ -456,7 +459,7 @@ namespace IoTHouse {
 
     function readTempHumi(select: Temp_humi): number {
         while (!GetInitStatus()) {
-            basic.pause(30);
+            basic.pause(10);
         }
         getAc();
         let buf = temp_i2cread(6);
@@ -474,13 +477,22 @@ namespace IoTHouse {
         tempValue = (tempValue | buf[4]) << 8;
         tempValue = tempValue | buf[5];
         tempValue = tempValue & 0xfffff;
+
+        tempValue = tempValue * 200 * 10 / 1024 / 1024 - 500;
+        tempValue = Math.round(tempValue);
+        if (tempValue != 0)
+            temperature = tempValue;
+
+        humiValue = humiValue * 1000 / 1024 / 1024;
+        humiValue = Math.round(humiValue);
+        if (humiValue != 0)
+            airhumidity = humiValue;
+
         if (select == Temp_humi.Temperature) {
-            tempValue = tempValue * 200 * 10 / 1024 / 1024 - 500;
-            return Math.round(tempValue);
+            return temperature;
         }
         else {
-            humiValue = humiValue * 1000 / 1024 / 1024;
-            return Math.round(humiValue);
+            return airhumidity;
         }
     }
 
@@ -634,16 +646,20 @@ namespace IoTHouse {
     //     return true;
     // }
 
+    function updateTempHumi() {
+        readTempHumi(Temp_humi.Temperature);
+    }
     /**
      * Send the sensors data
      */
     //% weight=44 blockId=sendSensorData block="Send sensors data to wifi module"
     //% subcategory=Communication
     export function sendSensorData() {
+        updateTempHumi();
         let cmdStr: string = "A";
-        cmdStr += (tempHumiPort != INVALID_PORT ? getTemperature(Temp_humi.Temperature) : 'NO');
+        cmdStr += (tempHumiPort != INVALID_PORT ? temperature : 'NO');
         cmdStr += '|';
-        cmdStr += (tempHumiPort != INVALID_PORT ? getTemperature(Temp_humi.Humidity) : 'NO');
+        cmdStr += (tempHumiPort != INVALID_PORT ? airhumidity : 'NO');
         cmdStr += '|';
         cmdStr += (soilPort != INVALID_PORT ? getSoilMoisture() : 'NO');
         cmdStr += '|';
@@ -657,7 +673,6 @@ namespace IoTHouse {
         }
         pins.i2cWriteBuffer(WIFI_MODE_ADRESS, data)
     }
-
     /**
     * get data from wifi
     */
