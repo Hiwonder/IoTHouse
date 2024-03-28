@@ -30,6 +30,7 @@
 	"iothouse.getBatteryVoltage|block": "获取电池电压值(mV)",
 	"iothouse.sendSensorData|block": "将传感器数据发送给WIFI模块",
 	"iothouse.sendData2Wifi|block": "将数据 %data 发送给WIFI模块",
+	"iothouse.setBrightness|block": "设置RGB灯光线亮度 %brightness",
 	"iothouse.Lights.Light1|block":"彩灯1",
 	"iothouse.Lights.Light2|block":"彩灯2",
 	"iothouse.Lights.All|block":"所有",
