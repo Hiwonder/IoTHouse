@@ -280,6 +280,7 @@ namespace iothouse {
 
     /**
     * Set the angle of servo 1 to 8, range of 0~180 degree
+    * @param index servo number in 1-6. eg: 1
     */
     //% weight=82 blockId=setServo block="Set servo|index %index|angle %angle|duration %duration"
     //% angle.min=0 angle.max=180
