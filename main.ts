@@ -459,8 +459,10 @@ namespace iothouse {
     }
 
     function readTempHumi(select: Temp_humi): number {
-        while (!GetInitStatus()) {
+        let cnt : number = 0;
+        while (!GetInitStatus() && cnt < 20) {
             basic.pause(10);
+            cnt++;
         }
         getAc();
         let buf = temp_i2cread(6);
@@ -680,7 +682,7 @@ namespace iothouse {
     //% weight=42 blockId=getDatafromWifi block="Get data buffer from wifi module"
     //% subcategory=Communication
     export function getDatafromWifi(): Buffer {
-        let received = pins.i2cReadBuffer(0x69, 3)
+        let received = pins.i2cReadBuffer(WIFI_MODE_ADRESS, 3)
         return received;
     }
 
