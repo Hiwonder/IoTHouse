@@ -449,9 +449,10 @@ namespace iothouse {
         temp_i2cwrite(0xac33);
         basic.pause(10)
         let value = temp_i2cread(1);
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 10; i++) {
             if ((value[0] & 0x80) != 0x80) {
-                basic.pause(5)
+                basic.pause(20);
+                value = temp_i2cread(1);
             }
             else
                 break;
@@ -460,8 +461,8 @@ namespace iothouse {
 
     function readTempHumi(select: Temp_humi): number {
         let cnt : number = 0;
-        while (!GetInitStatus() && cnt < 20) {
-            basic.pause(10);
+        while (!GetInitStatus() && cnt < 10) {
+            basic.pause(20);
             cnt++;
         }
         getAc();
