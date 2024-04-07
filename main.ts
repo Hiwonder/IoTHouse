@@ -5,11 +5,11 @@
 namespace iothouse {
     export enum Lights {
         //% block="Light 1"
-        Light1 = 0x01,
+        Light1 = 0x0,
         //% block="Light 2"
-        Light2 = 0x02,
+        Light2 = 0x1,
         //% block="All"
-        All = 0x03
+        All = 0x2
     }
 
     export enum iicPort2 {
@@ -560,10 +560,10 @@ namespace iothouse {
     function initRGBLight() {
         if (!rgbLight) {
             if (rgbPort == ioPort.port1) {
-                rgbLight = RGBLight.create(DigitalPin.P1, 3, RGBPixelMode.RGB);
+                rgbLight = RGBLight.create(DigitalPin.P1, 2, RGBPixelMode.RGB);
             }
             else if (rgbPort == ioPort.port2) {
-                rgbLight = RGBLight.create(DigitalPin.P13, 3, RGBPixelMode.RGB);
+                rgbLight = RGBLight.create(DigitalPin.P13, 2, RGBPixelMode.RGB);
             }
         }
         clearLight();
