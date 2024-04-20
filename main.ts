@@ -483,12 +483,12 @@ namespace iothouse {
         tempValue = tempValue & 0xfffff;
 
         tempValue = tempValue * 200 * 10 / 1024 / 1024 - 500;
-        tempValue = Math.round(tempValue);
+        tempValue = Math.round(tempValue / 10);
         if (tempValue != 0)
             temperature = tempValue;
 
         humiValue = humiValue * 1000 / 1024 / 1024;
-        humiValue = Math.round(humiValue);
+        humiValue = Math.round(humiValue / 10);
         if (humiValue != 0)
             airhumidity = humiValue;
 
