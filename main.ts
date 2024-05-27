@@ -119,7 +119,7 @@ namespace iothouse {
     */
     //% weight=96 blockId=ultrasonic_init block="Initialize ultrasonic sensor %port"
     //% subcategory=Init
-    export function ultrasonic_init(port: ioPort) {
+    export function ultrasonic_init(port: iicPort) {
         ultraPort = port;
     }
 
@@ -363,12 +363,11 @@ namespace iothouse {
         return val;
     }
 
-    function WireWriteDataArray(addr: number, reg: number, val: string): boolean {
-        let buf2 = pins.createBuffer(val.length + 1);
+    function WireWriteDataArray(addr: number, reg: number, val: number): boolean {
+        let buf2 = pins.createBuffer(3);
         buf2[0] = reg;
-        for (let i = 0; i < val.length; i++) {
-            buf2[i + 1] = val.charCodeAt(i);
-        }
+        buf2[1] = val & 0xff;
+        buf2[2] = (val >> 8) & 0xff;
         let rvalue2 = pins.i2cWriteBuffer(addr, buf2);
         if (rvalue2 != 0) {
             return false;
@@ -376,46 +375,144 @@ namespace iothouse {
         return true;
     }
 
-    //% weight=78 blockId=getUltrasonicDistance block="Get ultrasonic detected obstacle distance (cm)"
-    //% subcategory=Sensor
-    export function getUltrasonicDistance(): number {
-        if (ultraPort == INVALID_PORT)
-            return 0;
-        let trigPin: DigitalPin = DigitalPin.P1;
-        let echoPin: DigitalPin = DigitalPin.P2;
-        let distance: number = 0;
-        let d: number = 0;
+    const Sonar_I2C_ADDR = 0x77;
 
-        switch (ultraPort) {
-            case ioPort.port1:
-                trigPin = DigitalPin.P1;
-                echoPin = DigitalPin.P2;
-                break;
-            case ioPort.port2:
-                trigPin = DigitalPin.P13;
-                echoPin = DigitalPin.P14;
-                break;
-        }
-        pins.setPull(echoPin, PinPullMode.PullNone);
-        pins.setPull(trigPin, PinPullMode.PullNone);
+    const RGB_MODE = 2
 
-        // send pulse
-        pins.digitalWritePin(trigPin, 0);
-        control.waitMicros(2);
-        pins.digitalWritePin(trigPin, 1);
-        control.waitMicros(10);
-        pins.digitalWritePin(trigPin, 0);
-        // read pulse
-        d = pins.pulseIn(echoPin, PulseValue.High, 15000);
-        distance = d;
-        // filter timeout spikes
-        if (distance == 0 || distance >= 13920) {
-            distance = distanceBak;
-        }
-        else
-            distanceBak = d;
-        return Math.round(distance * 10 / 6 / 58);
+    const RGB1_R = 3
+    const RGB1_G = 4
+    const RGB1_B = 5
+    const RGB2_R = 6
+    const RGB2_G = 7
+    const RGB2_B = 8
+
+    const RGB1_R_BREATHING_CYCLE = 9
+    const RGB1_G_BREATHING_CYCLE = 10
+    const RGB1_B_BREATHING_CYCLE = 11
+    const RGB2_R_BREATHING_CYCLE = 12
+    const RGB2_G_BREATHING_CYCLE = 13
+    const RGB2_B_BREATHING_CYCLE = 14
+
+    export enum RGBMode {
+        //% block="rgb"
+        rgb = 0,
+        //% block="breathing"
+        breathing = 1,
     }
+
+    export enum RGBNum {
+        //% block="left"
+        left = 0,
+        //% block="right"
+        right = 1,
+        //% block="all"
+        all = 2,
+    }
+
+    //% weight=78 blockId=SETRGB block="Set Mode|%mode LED|%index RGB|%r|%g|%b"
+    //% inlineInputMode=inline
+    //% subcategory=Sensor
+    export function SETRGB(mode: RGBMode, index: RGBNum, r: number, g: number, b: number) {
+        WireWriteDataArray(Sonar_I2C_ADDR, RGB_MODE, mode);
+        let start_reg = 3;
+
+        if (mode == RGBMode.breathing) {
+            start_reg = 9;
+            r = r * 10;
+            g = g * 10;
+            b = b * 10;
+        }
+        else {
+            if (r == 0 && g == 0 && b == 0) {
+                let buf4 = pins.createBuffer(7);
+                buf4[0] = 0x09;
+                buf4[1] = 0x00;
+                buf4[2] = 0x00;
+                buf4[3] = 0x00;
+                buf4[4] = 0x00;
+                buf4[5] = 0x00;
+                buf4[6] = 0x00;
+                pins.i2cWriteBuffer(Sonar_I2C_ADDR, buf4);
+            }
+        }
+        if (index != RGBNum.all) {
+            let buf5 = pins.createBuffer(4);
+            if (index == RGBNum.left && mode == RGBMode.rgb) {
+                start_reg = 6;
+            }
+            else if (index == RGBNum.left && mode == RGBMode.breathing) {
+                start_reg = 12;
+            }
+            buf5[0] = start_reg & 0xff;
+            buf5[1] = r & 0xff;
+            buf5[2] = g & 0xff;
+            buf5[3] = b & 0xff;
+            pins.i2cWriteBuffer(Sonar_I2C_ADDR, buf5);
+        }
+        else {
+            let buf6 = pins.createBuffer(7);
+            buf6[0] = start_reg & 0xff;
+            buf6[1] = r & 0xff;
+            buf6[2] = g & 0xff;
+            buf6[3] = b & 0xff;
+            buf6[4] = r & 0xff;
+            buf6[5] = g & 0xff;
+            buf6[6] = b & 0xff;
+            pins.i2cWriteBuffer(Sonar_I2C_ADDR, buf6);
+        }
+    }
+
+    //% weight=76 blockId=GETDISTANCE block="Get Distance (cm)"
+    //% subcategory=Sensor blockGap=50
+    export function GETDISTANCE(): number {
+        let distance = i2cread(Sonar_I2C_ADDR, 0) + i2cread(Sonar_I2C_ADDR, 1) * 256;
+        if (distance > 65500)
+            distance = 0
+        return distance / 10;
+    }
+
+    /*
+        //% weight=78 blockId=getUltrasonicDistance block="Get ultrasonic detected obstacle distance (cm)"
+        //% subcategory=Sensor
+        export function getUltrasonicDistance(): number {
+            if (ultraPort == INVALID_PORT)
+                return 0;
+            let trigPin: DigitalPin = DigitalPin.P1;
+            let echoPin: DigitalPin = DigitalPin.P2;
+            let distance: number = 0;
+            let d: number = 0;
+    
+            switch (ultraPort) {
+                case ioPort.port1:
+                    trigPin = DigitalPin.P1;
+                    echoPin = DigitalPin.P2;
+                    break;
+                case ioPort.port2:
+                    trigPin = DigitalPin.P13;
+                    echoPin = DigitalPin.P14;
+                    break;
+            }
+            pins.setPull(echoPin, PinPullMode.PullNone);
+            pins.setPull(trigPin, PinPullMode.PullNone);
+    
+            // send pulse
+            pins.digitalWritePin(trigPin, 0);
+            control.waitMicros(2);
+            pins.digitalWritePin(trigPin, 1);
+            control.waitMicros(10);
+            pins.digitalWritePin(trigPin, 0);
+            // read pulse
+            d = pins.pulseIn(echoPin, PulseValue.High, 15000);
+            distance = d;
+            // filter timeout spikes
+            if (distance == 0 || distance >= 13920) {
+                distance = distanceBak;
+            }
+            else
+                distanceBak = d;
+            return Math.round(distance * 10 / 6 / 58);
+        }
+        */
 
     let ATH10_I2C_ADDR = 0x38;
     function temp_i2cwrite(value: number): number {
@@ -460,7 +557,7 @@ namespace iothouse {
     }
 
     function readTempHumi(select: Temp_humi): number {
-        let cnt : number = 0;
+        let cnt: number = 0;
         while (!GetInitStatus() && cnt < 10) {
             basic.pause(20);
             cnt++;
@@ -638,20 +735,19 @@ namespace iothouse {
     // export function setWifiSTAmodule() {
     // }
 
-    /**
-     * set wifi module connect to router, only valid in STA mode
-     * @param ssid is a string, eg: "iot"
-     * @param password is a string, eg: "123456"
-    */
-    //% weight=46 blockId=setWifiConnectToRouter block="Set wifi module connect to router, wifi name %ssid and password %password, connect successfully?"
-    //% subcategory=Communication
-    //% blockGap=50    
-    // export function setWifiConnectToRouter(ssid: string, password: string): boolean {
-    //     return true;
-    // }
-
     function updateTempHumi() {
         readTempHumi(Temp_humi.Temperature);
+    }
+
+    //% weight=46 blockId=wifiIsConnected block="Set Wifi AP mode"
+    //% subcategory=Communication
+    export function setWiFiAPMode() {
+        let cmdStr = "L0$";
+        let data = pins.createBuffer(cmdStr.length);
+        for (let i = 0; i <= cmdStr.length - 1; i++) {
+            data[i] = cmdStr.charCodeAt(i)
+        }
+        pins.i2cWriteBuffer(WIFI_MODE_ADRESS, data)
     }
     /**
      * Send the sensors data
@@ -682,80 +778,134 @@ namespace iothouse {
     */
     //% weight=42 blockId=getDatafromWifi block="Get data buffer from wifi module"
     //% subcategory=Communication
+    //% blockGap=50 
     export function getDatafromWifi(): Buffer {
         let received = pins.i2cReadBuffer(WIFI_MODE_ADRESS, 3)
         return received;
     }
 
-    /*
-    function handleRecv(data: string) {
-        if (data.length != 3) {
-            return;
+    /**
+ * set wifi module connect to router, only valid in STA mode
+ * @param ssid is a string, eg: "iot"
+ * @param password is a string, eg: "123456"
+*/
+    //% weight=40 blockId=setWifiConnectToRouter block="Set wifi module connect to router, wifi name %ssid and password %password"
+    //% subcategory=Communication
+    export function setWifiConnectToRouter(ssid: string, password: string) {
+        let cmdStr: string = "I"
+        cmdStr += ssid;
+        cmdStr += '|||'
+        cmdStr += password;
+        cmdStr += "$$$";
+        let data = pins.createBuffer(cmdStr.length);
+        for (let i = 0; i <= cmdStr.length - 1; i++) {
+            data[i] = cmdStr.charCodeAt(i)
         }
-        let cmd: string = data.substr(0, 1)
-        let value: number = parseInt(data.substr(1, 1))
-        switch (cmd) {
-            case 'B':
-                if (rgbLight) {//RGB模块控制
-                    if (value)//开
-                    {
-                        setBrightness(200);
-                        setPixelRGB(Lights.All, RGBColors.White);
-                        showLight();
-                    }
-                    else {
-                        clearLight();
-                    }
-                }
-                break;
-            case 'C'://水泵控制
-                if (value)//开
-                {
-                    setWaterPump(100);
-                }
-                else {
-                    setWaterPump(0);
-                }
-                break;
-            case 'D'://风扇控制
-                if (value)//开
-                {
-                    setFanSpeed(100);
-                }
-                else {
-                    setFanSpeed(0);
-                }
-                break;
-            case 'E'://蜂鸣器控制
-                if (value)//开
-                {
-                    music.setVolume(200)
-                    music.play(music.tonePlayable(698, music.beat(BeatFraction.Whole)), music.PlaybackMode.LoopingInBackground)
-                }
-                else {
-                    music.stopAllSounds()
-                }
-                break;
-            case 'F'://舵机1控制
-                if (value)//开
-                {
-                    setServo(1, 180, 1000);
-                }
-                else {
-                    setServo(1, 0, 1000);
-                }
-                break;
-            case 'G'://舵机2控制
-                if (value)//开
-                {
-                    setServo(4, 180, 1000);
-                }
-                else {
-                    setServo(4, 0, 1000);
-                }
-                break;
+        pins.i2cWriteBuffer(WIFI_MODE_ADRESS, data)
+    }
+
+    //% weight=38 blockId=wifiIsConnected block="Is wifi connected ?"
+    //% subcategory=Communication
+    export function wifiIsConnected(): boolean {
+        let cmdStr = "J0$";
+        let data = pins.createBuffer(cmdStr.length);
+        for (let i = 0; i <= cmdStr.length - 1; i++) {
+            data[i] = cmdStr.charCodeAt(i)
+        }
+        pins.i2cWriteBuffer(WIFI_MODE_ADRESS, data)
+        let val = pins.i2cReadBuffer(WIFI_MODE_ADRESS, 3);
+        if (val[0] == 0x4A && val[1] == 1)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+    * Connect to ThingSpeak and upload data. It would not upload anything if it failed to connect to Wifi or ThingSpeak.
+    */
+    //% weight=36 blockId=connectThingSpeak block="Upload data to ThingSpeak Write key = %write_api_key|Field 1 = %n1||Field 2 = %n2|Field 3 = %n3|Field 4 = %n4|Field 5 = %n5|Field 6 = %n6|Field 7 = %n7 Field 8 = %n8"
+    //% ip.defl=api.thingspeak.com
+    //% write_api_key.defl=your_write_api_key
+    //% expandableArgumentMode="enabled" subcategory=Communication
+    export function connectThingSpeak(write_api_key: string, n1?: number, n2?: number, n3?: number, n4?: number, n5?: number, n6?: number, n7?: number, n8?: number) {
+        if (write_api_key != "") {
+            let hasData = false;
+            let cmdStr = "K" + write_api_key;
+            if (n1 != undefined) {
+                cmdStr += "|1|";
+                cmdStr += n1.toString();
+                hasData = true;
+            }
+            if (n2 != undefined) {
+                cmdStr += "|2|";
+                cmdStr += n2.toString();
+                hasData = true;
+            }
+            if (n3 != undefined) {
+                cmdStr += "|3|";
+                cmdStr += n3.toString();
+                hasData = true;
+            }
+            if (n4 != undefined) {
+                cmdStr += "|4|";
+                cmdStr += n4.toString();
+                hasData = true;
+            }
+            if (n5 != undefined) {
+                cmdStr += "|5|";
+                cmdStr += n5.toString();
+                hasData = true;
+            }
+            if (n6 != undefined) {
+                cmdStr += "|6|";
+                cmdStr += n6.toString();
+                hasData = true;
+            }
+            if (n7 != undefined) {
+                cmdStr += "|7|";
+                cmdStr += n7.toString();
+                hasData = true;
+            }
+            if (n8 != undefined) {
+                cmdStr += "|8|";
+                cmdStr += n8.toString();
+                hasData = true;
+            }
+            cmdStr += '$'
+            serial.writeLine(cmdStr);
+            let data = pins.createBuffer(cmdStr.length);
+            for (let i = 0; i <= cmdStr.length - 1; i++) {
+                data[i] = cmdStr.charCodeAt(i)
+            }
+            if (hasData) {
+                pins.i2cWriteBuffer(WIFI_MODE_ADRESS, data)
+            }
+
         }
     }
-    */
 
+    /**
+    * get data from thingspeak
+    * @param fieldId is a string, eg: "6"
+    */
+    //% weight=34 blockId=getDatafromThingspeak block="Get ThingSpeak field Id %fieldId data channel id %channelId and read key %readKey"
+    //% subcategory=Communication
+    export function getDatafromThingspeak(fieldId: string, channelId: string, readKey: string): string {
+        let cmdStr = "M" + channelId + "|" + readKey + "|" + fieldId + "$";
+        let data = pins.createBuffer(cmdStr.length);
+        for (let i = 0; i <= cmdStr.length - 1; i++) {
+            data[i] = cmdStr.charCodeAt(i)
+        }
+        pins.i2cWriteBuffer(WIFI_MODE_ADRESS, data)
+        let received = pins.i2cReadBuffer(WIFI_MODE_ADRESS, 80)
+        let receivedStr = received.toString();
+        serial.writeString("data1:")
+        serial.writeLine(receivedStr)
+        let pos = receivedStr.indexOf("field" + fieldId);
+        pos = receivedStr.indexOf(":", pos);
+        let value = receivedStr.substr(pos + 2, 3)
+        serial.writeString("data2:")
+        serial.writeLine(value)
+        return value;
+    }
 }
