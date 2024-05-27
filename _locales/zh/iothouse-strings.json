@@ -58,6 +58,7 @@
 	"iothouse.ioPort.port1|block": "接口1",
 	"iothouse.ioPort.port2|block": "接口2",
 	"iothouse.getDatafromWifi|block": "从WIFI模块获取数据列表",
+	"iothouse.setWiFiAPMode|block": "设置WIFI模块直连模式",
 	"RGBColors.Red|block":"红色",
 	"RGBColors.Orange|block":"橙色",
 	"RGBColors.Yellow|block":"黄色",
