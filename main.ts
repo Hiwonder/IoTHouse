@@ -739,7 +739,7 @@ namespace iothouse {
         readTempHumi(Temp_humi.Temperature);
     }
 
-    //% weight=46 blockId=wifiIsConnected block="Set Wifi AP mode"
+    //% weight=46 blockId=setWiFiAPMode block="Set Wifi AP mode"
     //% subcategory=Communication
     export function setWiFiAPMode() {
         let cmdStr = "L0$";
