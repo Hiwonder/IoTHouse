@@ -15,8 +15,6 @@ namespace iothouse {
     export enum iicPort2 {
         //% block="port 4"
         port4 = 0x04,
-        //% block="port 5"
-        port5 = 0x05,
         //% block="port 6"
         port6 = 0x06
     }
@@ -24,8 +22,6 @@ namespace iothouse {
     export enum iicPort {
         //% block="port 4"
         port4 = 0x04,
-        //% block="port 5"
-        port5 = 0x05,
         //% block="port 6"
         port6 = 0x06,
         //% block="iic extend"
