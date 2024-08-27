@@ -1,5 +1,5 @@
 {
-	"iothouse.iothouse_init":"IoTHouse板初始化，请在开机时执行",
+	"iothouse.iothouse_init":"IoTHouse初始化，请在开机时执行",
 	"iothouse.setServo":"设置1到2号舵机角度，角度范围0~180",
 	"iothouse.setBusServo":"设置1到2号总线舵机角度，角度范围0~240",
 	"iothouse.setMotorSpeed":"设置马达1和马达2的速度，速度范围-100到100，可控制坦克车行进和转弯",
