@@ -12,7 +12,9 @@
         "RGBLight.ts",
         "sendbuffer.asm",
         "_locales/zh/iothouse-strings.json",
-        "_locales/zh/iothouse-jsdoc-strings.json"
+        "_locales/zh/iothouse-jsdoc-strings.json",
+        "_locales/zh-TW/iothouse-strings.json",
+        "_locales/zh-TW/iothouse-jsdoc-strings.json"
     ],
     "testFiles": [
         "test.ts"
