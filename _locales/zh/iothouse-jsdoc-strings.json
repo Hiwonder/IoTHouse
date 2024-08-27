@@ -2,7 +2,7 @@
 	"iothouse.iothouse_init":"IoTHouse初始化，请在开机时执行",
 	"iothouse.setServo":"设置1到2号舵机角度，角度范围0~180",
 	"iothouse.setBusServo":"设置1到2号总线舵机角度，角度范围0~240",
-	"iothouse.setMotorSpeed":"设置马达1和马达2的速度，速度范围-100到100，可控制坦克车行进和转弯",
+	"iothouse.setMotorSpeed":"设置马达1和马达2的速度，速度范围-100到100",
 	"iothouse.Ultrasonic":"获取超声波检测到障碍物的距离",
 	"iothouse.getSoundVolume":"获取声音传感器检测到的音量等级，范围0到255",
 	"iothouse.readLineFollowerStatus":"获取巡线传感器的状态",
