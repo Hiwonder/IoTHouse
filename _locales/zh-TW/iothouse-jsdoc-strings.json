@@ -1,0 +1,13 @@
+{
+	"iothouse.iothouse_init":"IoTHouse初始化，請在開機時執行",
+	"iothouse.setServo":"設定1到2號舵機角度，角度範圍0~180",
+	"iothouse.setBusServo":"設定1到2號總線舵機角度，角度範圍0~240",
+	"iothouse.setMotorSpeed":"設定馬達1和馬達2的速度，速度範圍-100到100",
+	"iothouse.Ultrasonic":"獲取超聲波檢測到障礙物的距離",
+	"iothouse.getSoundVolume":"獲取聲音感測器檢測到的音量等級，範圍0到255",
+	"iothouse.readLineFollowerStatus":"獲取巡線感測器的狀態",
+	"iothouse.setPixelRGB":"設定彩燈顏色，設定完成後請執行顯示彩燈操作",
+	"iothouse.setPixelRGBArgs":"設定彩燈顏色，填入編號即可設定，1.紅色2.橙色3.黃色4.綠色5.藍色6.靛藍7.紫羅蘭8.紫色9.白色，設定完成後請執行顯示彩燈操作",
+	"iothouse.showLight":"顯示彩燈，和設定彩燈顏色配合使用，設定完彩燈顏色後必須執行顯示彩燈完成顯示",
+	"iothouse.clearLight":"清除彩燈顏色，關閉彩燈"
+}
