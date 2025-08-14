@@ -141,7 +141,7 @@ namespace RGBLight {
             this.setBufferRGB(pixeloffset, red, green, blue)
         }
 
-        private setBufferRGB(offset: number, red: number, green: number, blue: number): void {
+        setBufferRGB(offset: number, red: number, green: number, blue: number): void {
             if (this._mode === RGBPixelMode.RGB_RGB) {
                 this.buf[offset + 0] = red;
                 this.buf[offset + 1] = green;

@@ -203,11 +203,18 @@ namespace iothouse {
         let index = findIndexof(handleCmd, "$", 0);
         if (index != -1) {
             let cmd: string = handleCmd.substr(0, index);
-            if (cmd.charAt(0).compare("A") == 0 && cmd.length == 5) {
-                let arg1Int: number = strToNumber(cmd.substr(1, 2));//P14 AD
-                let arg2Int: number = strToNumber(cmd.substr(3, 2));//音量值
-                let arg3Int: number = strToNumber(cmd.substr(5, 2));//电压值=值 * 25.78(mV)
-                batVoltage = Math.round(arg3Int * 25.78);
+            if (cmd.charAt(0).compare("A") == 0) {
+                if (cmd.length == 7) {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
+
+                    if (arg3Int != -1) {
+                        batVoltage = arg3Int * 78.63;
+                        batVoltage = Math.round(batVoltage);
+                    }
+
+                } 
             }
         }
         handleCmd = "";
