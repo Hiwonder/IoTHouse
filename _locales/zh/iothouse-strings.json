@@ -34,6 +34,7 @@
 	"iothouse.sendSensorData|block": "将传感器数据发送给WIFI模块",
 	"iothouse.sendData2Wifi|block": "将数据 %data 发送给WIFI模块",
 	"iothouse.setBrightness|block": "设置RGB灯光线亮度 %brightness",
+	"iothouse.setRGB|block": "设置|%lightoffset|颜色为R|%r G|%g B|%b",
 	"iothouse.Lights.Light1|block":"彩灯1",
 	"iothouse.Lights.Light2|block":"彩灯2",
 	"iothouse.Lights.All|block":"所有",
@@ -80,5 +81,13 @@
     "{id:subcategory}Control":"控制",
     "{id:subcategory}Sensor": "传感器",
     "{id:subcategory}LED":"RGB彩灯",
-	"{id:subcategory}Communication":"通信"
+	"{id:subcategory}Communication":"通信",
+	"iothouse.setMCP|block": "设置MCP工具调用(只支持英文) |工具名称%tool_name |工具描述%command |AIModule返回参数%params |阻塞直到工具调用完成%block |有数据返回给AIModule%have_return",
+	"iothouse.sendStatus|block": "返回数据%params给AIModule",
+	"iothouse.mcp_setting_finish|block": "通知AIModule完成MCP设置",
+	"iothouse.set_aimodule_sleep|block": "设置AIModule进入待命状态",
+	"iothouse.mcp_action_finish|block": "通知AIModule工具调用完成",
+	"iothouse.get_mcp_return|block": "获取AIModule被调用工具返回参数",
+	"iothouse.setVision|block": "设置视觉任务%params",
+	"iothouse.get_mcp_setting_length|block": "获取MCP设置参数长度(不能超过1024)"
 }

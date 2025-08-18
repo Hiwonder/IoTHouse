@@ -80,5 +80,13 @@
     "{id:subcategory}Control":"控制",
     "{id:subcategory}Sensor": "感測器",
     "{id:subcategory}LED":"RGB彩燈",
-	"{id:subcategory}Communication":"通信"
+	"{id:subcategory}Communication":"通信",
+	"iothouse.setMCP|block": "設定MCP工具調用(只支援英文) |工具名稱%tool_name |工具描述%command |AIModule返回參數%params |阻塞直到工具調用完成%block |有數據返回給AIModule%have_return",
+	"iothouse.sendStatus|block": "返回數據%params給AIModule",
+	"iothouse.mcp_setting_finish|block": "通知AIModule完成MCP設定",
+	"iothouse.set_aimodule_sleep|block": "設定AIModule進入待命狀態",
+	"iothouse.mcp_action_finish|block": "通知AIModule工具調用完成",
+	"iothouse.get_mcp_return|block": "獲取AIModule被調用工具返回參數",
+	"iothouse.setVision|block": "設定視覺任務%params",
+	"iothouse.get_mcp_setting_length|block": "獲取MCP設定參數長度(不能超過1024)"
 }
